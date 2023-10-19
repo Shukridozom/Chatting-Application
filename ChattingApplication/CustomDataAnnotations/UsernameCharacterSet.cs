@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ChattingApplication.Dtos;
+using System.ComponentModel.DataAnnotations;
 
 namespace ChattingApplication.CustomDataAnnotations
 {
@@ -7,7 +8,7 @@ namespace ChattingApplication.CustomDataAnnotations
         string usernameCharacterSet = "abcdefghijklmnopqrstuvwxyzABCEDFGHIJKLMNOPQRSTUVWXYZ0123456789_";
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            string username = (string)validationContext.ObjectInstance;
+            string username = ((RegisterDto)validationContext.ObjectInstance)?.Username;
 
             if (username.Length < 6)
                 return new ValidationResult("username must be at least 6 characters long");
