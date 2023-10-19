@@ -12,7 +12,7 @@ using System.Text;
 
 namespace ChattingApplication.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api")]
     [ApiController]
     public class AccountsController : ControllerBase
     {
