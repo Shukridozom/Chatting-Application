@@ -1,3 +1,6 @@
+using ChattingApplication.Persistence;
+using Microsoft.EntityFrameworkCore;
+
 namespace ChattingApplication
 {
     public class Program
@@ -13,6 +16,8 @@ namespace ChattingApplication
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddDbContext<AppDbContext>(opt => opt
+                .UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
