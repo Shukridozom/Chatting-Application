@@ -1,4 +1,7 @@
+using ChattingApplication.Core;
+using ChattingApplication.Core.Repositories;
 using ChattingApplication.Persistence;
+using ChattingApplication.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -19,6 +22,9 @@ namespace ChattingApplication
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddTransient<IUserRepository, UserRepository>();
+            builder.Services.AddTransient<IConfirmationCodeRepository, ConfirmationCodeRepository>();
+            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddDbContext<AppDbContext>(opt => opt
                 .UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
 
