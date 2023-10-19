@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ChattingApplication.DependencyInjection;
+using ChattingApplication.Core.EmailService;
 
 namespace ChattingApplication
 {
@@ -28,6 +29,8 @@ namespace ChattingApplication
             builder.Configuration.AddUserSecrets("8338e13c-00f0-4af7-b092-5cdb374b6648");
 
             builder.Services.AddAutoMapper(typeof(Program));
+
+            builder.Services.AddSingleton<IEmailService, EmailService>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
