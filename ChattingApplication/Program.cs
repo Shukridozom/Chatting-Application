@@ -1,5 +1,8 @@
 using ChattingApplication.Persistence;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace ChattingApplication
 {
@@ -18,6 +21,23 @@ namespace ChattingApplication
 
             builder.Services.AddDbContext<AppDbContext>(opt => opt
                 .UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Configuration.AddUserSecrets("8338e13c-00f0-4af7-b092-5cdb374b6648");
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                    };
+                });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
