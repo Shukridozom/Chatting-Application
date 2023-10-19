@@ -1,4 +1,5 @@
-﻿using ChattingApplication.Core;
+﻿using AutoMapper;
+using ChattingApplication.Core;
 using ChattingApplication.Core.Domains;
 using ChattingApplication.Dtos;
 using Microsoft.AspNetCore.Authorization;
@@ -17,11 +18,13 @@ namespace ChattingApplication.Controllers
     {
         private readonly IConfiguration _config;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IMapper _mapper;
 
-        public AccountsController(IConfiguration config, IUnitOfWork unitOfWork)
+        public AccountsController(IConfiguration config, IUnitOfWork unitOfWork, IMapper mapper)
         {
             _config = config;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
         }
 
         [AllowAnonymous]
@@ -40,8 +43,32 @@ namespace ChattingApplication.Controllers
             return NotFound("The username or password is incorrect");
         }
 
+
         [AllowAnonymous]
         [HttpPost]
+        [Route("register")]
+        public IActionResult Register(RegisterDto registerDto)
+        {
+            var userWithSameUsername = _unitOfWork.Users.SingleOrDefault
+                (u => u.Username.ToLower() == registerDto.Username.ToLower());
+            if (userWithSameUsername != null)
+                return BadRequest("Username already exists");
+
+            var userWithSameEmail = _unitOfWork.Users.SingleOrDefault
+                (u => u.Email.ToLower() == registerDto.Email.ToLower());
+            if (userWithSameEmail != null)
+                return BadRequest("Email already exists");
+
+
+            var user = _mapper.Map<RegisterDto, User>(registerDto);
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(registerDto.Password);
+            user.RegisteredDate = DateTime.Now;
+            _unitOfWork.Users.Add(user);
+
+            _unitOfWork.Complete();
+
+            return Ok();
+        }
 
         private User AuthenticateUser(LoginDto loginCredentials)
         {

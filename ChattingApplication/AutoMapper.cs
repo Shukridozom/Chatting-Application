@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using ChattingApplication.Core.Domains;
+using ChattingApplication.Dtos;
 
 namespace ChattingApplication
 {
@@ -7,6 +9,9 @@ namespace ChattingApplication
         public AutoMapper()
         {
 
+            CreateMap<User, RegisterDto>();
+            CreateMap<RegisterDto, User>()
+                .ForMember(m => m.Id, opt => opt.Ignore());
 
         }
     }
