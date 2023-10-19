@@ -11,9 +11,6 @@ namespace ChattingApplication.CustomDataAnnotations
             var registerDto = ((RegisterDto)validationContext.ObjectInstance);
             var firstName = registerDto.FirstName;
 
-            if (firstName.Length < 6)
-                return new ValidationResult("Firstname must be at least 6 characters long");
-
             foreach (var character in firstName)
             {
                 if (!firstNameCharacterSet.Contains(character))
