@@ -27,6 +27,8 @@ namespace ChattingApplication
 
             builder.Configuration.AddUserSecrets("8338e13c-00f0-4af7-b092-5cdb374b6648");
 
+            builder.Services.AddAutoMapper(typeof(Program));
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters
