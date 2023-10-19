@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using ChattingApplication.DependencyInjection;
 
 namespace ChattingApplication
 {
@@ -22,11 +23,7 @@ namespace ChattingApplication
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddTransient<IUserRepository, UserRepository>();
-            builder.Services.AddTransient<IConfirmationCodeRepository, ConfirmationCodeRepository>();
-            builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-            builder.Services.AddDbContext<AppDbContext>(opt => opt
-                .UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
+            builder.Services.AddRepositories(builder.Configuration);
 
             builder.Configuration.AddUserSecrets("8338e13c-00f0-4af7-b092-5cdb374b6648");
 
