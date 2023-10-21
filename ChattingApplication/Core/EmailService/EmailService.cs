@@ -25,7 +25,7 @@ namespace ChattingApplication.Core.EmailService
             email.Subject = "Verification code";
             email.Body = new TextPart(MimeKit.Text.TextFormat.Html)
             {
-                Text = $"Hi + {name}, Your verification code is {code}"
+                Text = $"Hi {name}, Your verification code is {code}"
             };
 
 

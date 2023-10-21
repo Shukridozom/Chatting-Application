@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ChattingApplication.Core;
 using ChattingApplication.Core.Domains;
+using ChattingApplication.Core.EmailService;
 using ChattingApplication.Dtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -19,12 +20,14 @@ namespace ChattingApplication.Controllers
         private readonly IConfiguration _config;
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly IEmailService mailService;
 
-        public AccountsController(IConfiguration config, IUnitOfWork unitOfWork, IMapper mapper)
+        public AccountsController(IConfiguration config, IUnitOfWork unitOfWork, IMapper mapper, IEmailService mailService)
         {
             _config = config;
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            this.mailService = mailService;
         }
 
         [AllowAnonymous]
@@ -66,6 +69,8 @@ namespace ChattingApplication.Controllers
             _unitOfWork.Users.Add(user);
 
             _unitOfWork.Complete();
+
+            mailService.SendConfirmationCode(user.Email, user.FirstName + " " + user.LastName, "123456"); //Test Line
 
             return Ok();
         }
