@@ -70,7 +70,6 @@ namespace ChattingApplication.Controllers
 
             _unitOfWork.Complete();
 
-            mailService.SendConfirmationCode(user.Email, user.FirstName + " " + user.LastName, "123456"); //Test Line
 
             return Ok();
         }
