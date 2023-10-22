@@ -70,6 +70,10 @@ namespace ChattingApplication.Persistence
                 .IsRequired()
                 .HasDefaultValue(3);
 
+            modelBuilder.Entity<ConfirmationCode>()
+                .Property(c => c.RemainingCodesForThisDay)
+                .IsRequired()
+                .HasDefaultValue(5);
 
         }
 

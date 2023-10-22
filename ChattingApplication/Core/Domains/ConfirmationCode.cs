@@ -8,6 +8,7 @@
         public string Code { get; set; }
         public DateTime ExpireDate { get; set; }
         public byte Trials { get; set; }
+        public byte RemainingCodesForThisDay { get; set; }
 
     }
 }
