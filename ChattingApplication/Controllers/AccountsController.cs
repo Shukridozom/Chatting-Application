@@ -70,8 +70,44 @@ namespace ChattingApplication.Controllers
 
             _unitOfWork.Complete();
 
+            // Creating a confirmation code for the newly registered user:
+            var code = CreateOrUpdateVerificationCode(user.Id);
+
+            if(code != null)
+                mailService.SendConfirmationCode
+                    (user.Email, user.FirstName + " " + user.LastName, code, EmailType.ConfirmAccount);
 
             return Ok();
+        }
+
+        [HttpPost("confirmAccount")]
+        [Authorize]
+        public IActionResult ConfirmAccount(string code)
+        {
+            var userCredentials = GetUserCredentials();
+            var confirmationCode = _unitOfWork.ConfirmationCodes
+                .SingleOrDefault(cc => cc.UserId == userCredentials.Id);
+
+            if (confirmationCode == null)
+                return BadRequest("This code is not valid anymore, request a new one");
+
+            if (confirmationCode.ExpireDate < DateTime.Now || confirmationCode.Trials == 0)
+                return BadRequest("This code is not valid anymore, request a new one");
+
+            if (confirmationCode.Code != code)
+            {
+                confirmationCode.Trials--;
+                _unitOfWork.Complete();
+
+                return BadRequest("Unvalid confirmation code");
+            }
+
+            confirmationCode.Trials = 0;
+            var userFromDb = _unitOfWork.Users.SingleOrDefault(u => u.Id == userCredentials.Id);
+            userFromDb.IsVerified = true;
+            _unitOfWork.Complete();
+
+            return Ok("Account has been activated");
         }
 
         private User AuthenticateUser(LoginDto loginCredentials)
@@ -109,5 +145,61 @@ namespace ChattingApplication.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        private User GetUserCredentials()
+        {
+            var identity = HttpContext.User.Identity as ClaimsIdentity;
+
+            if (identity == null)
+                return null;
+
+            var userClaims = identity.Claims;
+            return new User
+            {
+                Id = Convert.ToInt32(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value),
+                Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
+                Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
+                IsVerified = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value == "Verified"
+            };
+        }
+
+        private string CreateOrUpdateVerificationCode(int userId)
+        {
+            var code = GenerateRandomString(6);
+            var confirmationCode = _unitOfWork.ConfirmationCodes
+                .SingleOrDefault(cc => cc.UserId == userId);
+            if (confirmationCode == null)
+            {
+                var newConfirmationCode = new ConfirmationCode()
+                {
+                    UserId = userId,
+                    Code = code,
+                    ExpireDate = DateTime.Now.AddMinutes(15),
+                    Trials = 3,
+                    RemainingCodesForThisDay = 5 - 1
+                };
+                _unitOfWork.ConfirmationCodes.Add(newConfirmationCode);
+            }
+            else
+            {
+                if (confirmationCode.RemainingCodesForThisDay > 0)
+                    confirmationCode.RemainingCodesForThisDay--;
+                else
+                    return null;
+            }
+
+            _unitOfWork.Complete();
+
+            return code;
+        }
+
+        private string GenerateRandomString(int length)
+        {
+            Random random = new Random();
+            const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+            return new string(Enumerable.Repeat(chars, length)
+                .Select(s => s[random.Next(s.Length)]).ToArray());
+        }
+
     }
 }
