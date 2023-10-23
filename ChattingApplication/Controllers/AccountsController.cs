@@ -165,7 +165,7 @@ namespace ChattingApplication.Controllers
 
         private string CreateOrUpdateVerificationCode(int userId)
         {
-            var code = GenerateRandomString(6);
+            var code = GenerateRandomString(Convert.ToInt32(_config["ConfirmationCodes:Length"]));
             var confirmationCode = _unitOfWork.ConfirmationCodes
                 .SingleOrDefault(cc => cc.UserId == userId);
             if (confirmationCode == null)
@@ -175,8 +175,9 @@ namespace ChattingApplication.Controllers
                     UserId = userId,
                     Code = code,
                     ExpireDate = DateTime.Now.AddMinutes(15),
-                    Trials = 3,
-                    RemainingCodesForThisDay = 5 - 1
+                    Trials = Convert.ToByte(_config["ConfirmationCodes:Trials"]),
+                    RemainingCodesForThisDay = 
+                    (byte)(Convert.ToInt32(_config["ConfirmationCodes:RemainingNumberOfCodesForThisDay"]) - 1)
                 };
                 _unitOfWork.ConfirmationCodes.Add(newConfirmationCode);
             }

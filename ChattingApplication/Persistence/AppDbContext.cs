@@ -5,12 +5,15 @@ namespace ChattingApplication.Persistence
 {
     public class AppDbContext : DbContext
     {
+        private readonly IConfiguration _config;
+
         public DbSet<User> Users { get; set; }
         public DbSet<ConfirmationCode> ConfirmationCodes { get; set; }
 
-        public AppDbContext(DbContextOptions<AppDbContext> options) 
+        public AppDbContext(DbContextOptions<AppDbContext> options, IConfiguration config) 
             : base(options)
         {
+            _config = config;
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -68,12 +71,13 @@ namespace ChattingApplication.Persistence
             modelBuilder.Entity<ConfirmationCode>()
                 .Property(c => c.Trials)
                 .IsRequired()
-                .HasDefaultValue(3);
+                .HasDefaultValue(Convert.ToByte(_config["ConfirmationCodes:Trials"]));
 
             modelBuilder.Entity<ConfirmationCode>()
                 .Property(c => c.RemainingCodesForThisDay)
                 .IsRequired()
-                .HasDefaultValue(5);
+                .HasDefaultValue(
+                Convert.ToByte(_config["ConfirmationCodes:RemainingNumberOfCodesForThisDay"]) - 1);
 
         }
 
