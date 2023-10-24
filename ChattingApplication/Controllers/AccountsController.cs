@@ -110,6 +110,57 @@ namespace ChattingApplication.Controllers
             return Ok("Account has been activated");
         }
 
+        [HttpPost("resetPassword")]
+        [AllowAnonymous]
+        public IActionResult ResetPassword(ResetPasswordDto resetPasswordDto)
+        {
+            var user = _unitOfWork.Users.SingleOrDefault(u => u.Email == resetPasswordDto.Email);
+
+            if (user == null)
+                return BadRequest("Unavailable Email address");
+
+            var confirmationCode = _unitOfWork.ConfirmationCodes
+                .SingleOrDefault(cc => cc.UserId == user.Id);
+
+            if (confirmationCode == null)
+                return BadRequest("This code is not valid anymore, request a new one");
+
+            if (confirmationCode.ExpireDate < DateTime.Now || confirmationCode.Trials == 0)
+                return BadRequest("This code is not valid anymore, request a new one");
+
+            if (confirmationCode.Code != resetPasswordDto.Code)
+            {
+                confirmationCode.Trials--;
+                _unitOfWork.Complete();
+
+                return BadRequest("Unvalid confirmation code");
+            }
+
+            confirmationCode.Trials = 0;
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(resetPasswordDto.Password);
+            _unitOfWork.Complete();
+
+            return Ok("Password has been reset");
+        }
+
+        [HttpPost("requestCode")]
+        [AllowAnonymous]
+        public IActionResult RequestCode(string email)
+        {
+            var user = _unitOfWork.Users.SingleOrDefault(u => u.Email == email);
+            if (user == null)
+                return BadRequest("Unavailable Email ");
+
+            var code = CreateOrUpdateVerificationCode(user.Id);
+
+            if (code != null)
+                mailService.SendConfirmationCode
+                    (user.Email, user.FirstName + " " + user.LastName, code, EmailType.ConfirmAccount);
+
+            return Ok();
+
+        }
+
         private User AuthenticateUser(LoginDto loginCredentials)
         {
             var user = _unitOfWork.Users.SingleOrDefault(u => u.Username.ToLower()
@@ -174,7 +225,7 @@ namespace ChattingApplication.Controllers
                 {
                     UserId = userId,
                     Code = code,
-                    ExpireDate = DateTime.Now.AddMinutes(15),
+                    ExpireDate = DateTime.Now.AddMinutes(Convert.ToInt32(_config["ConfirmationCodes:ExpireDurationInMinutes"])),
                     Trials = Convert.ToByte(_config["ConfirmationCodes:Trials"]),
                     RemainingCodesForThisDay = 
                     (byte)(Convert.ToInt32(_config["ConfirmationCodes:RemainingNumberOfCodesForThisDay"]) - 1)
@@ -184,7 +235,13 @@ namespace ChattingApplication.Controllers
             else
             {
                 if (confirmationCode.RemainingCodesForThisDay > 0)
+                {
+                    confirmationCode.Code = code;
+                    confirmationCode.ExpireDate = DateTime.Now.AddMinutes(Convert.ToInt32(_config["ConfirmationCodes:ExpireDurationInMinutes"]));
+                    confirmationCode.Trials = Convert.ToByte(_config["ConfirmationCodes:Trials"]);
                     confirmationCode.RemainingCodesForThisDay--;
+
+                }
                 else
                     return null;
             }
