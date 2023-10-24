@@ -8,7 +8,7 @@ namespace ChattingApplication.CustomDataAnnotations
         string passwordCharacterSet = "abcdefghijklmnopqrstuvwxyzABCEDFGHIJKLMNOPQRSTUVWXYZ0123456789_.*@#$%!?";
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            var password = ((RegisterDto)validationContext.ObjectInstance)?.Password;
+            var password = value?.ToString() ?? string.Empty;
 
             if (password.Length < 6)
                 return new ValidationResult("Password must be at least 6 characters long");

@@ -31,12 +31,12 @@ namespace ChattingApplication.Dtos
 
         [Required]
         [MaxLength(255)]
-        [FirstNameCharacterSet]
+        [NameCharacterSet]
         public string FirstName { get; set; }
 
         [Required]
         [MaxLength(255)]
-        [LastNameCharacterSet]
+        [NameCharacterSet]
         public string LastName { get; set; }
         public DateTime? DateOfBirth { get; set; }
     }

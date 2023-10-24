@@ -3,17 +3,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ChattingApplication.CustomDataAnnotations
 {
-    public class LastNameCharacterSet : ValidationAttribute
+    public class NameCharacterSet : ValidationAttribute
     {
-        string lastNameCharacterSet = "abcdefghijklmnopqrstuvwxyzABCEDFGHIJKLMNOPQRSTUVWXYZ0123456789_'-";
+        string firstNameCharacterSet = "abcdefghijklmnopqrstuvwxyzABCEDFGHIJKLMNOPQRSTUVWXYZ0123456789_'-";
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            var registerDto = ((RegisterDto)validationContext.ObjectInstance);
-            var lastName = registerDto.LastName;
+            var firstName = value?.ToString() ?? string.Empty;
 
-            foreach (var character in lastName)
+            foreach (var character in firstName)
             {
-                if (!lastNameCharacterSet.Contains(character))
+                if (!firstNameCharacterSet.Contains(character))
                     return new ValidationResult("Allowed characters: [a...z][A...Z][0...9] and these symbols: _'- ");
             }
 
