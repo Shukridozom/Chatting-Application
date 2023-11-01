@@ -32,6 +32,8 @@ namespace ChattingApplication
 
             builder.Services.AddSingleton<IEmailService, EmailService>();
 
+            builder.Services.AddSignalR();
+
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options => {
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -61,6 +63,7 @@ namespace ChattingApplication
 
             app.UseAuthorization();
 
+            app.MapHub<ChatHub>("/chatHub");
 
             app.MapControllers();
 
