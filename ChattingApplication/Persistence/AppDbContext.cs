@@ -9,6 +9,7 @@ namespace ChattingApplication.Persistence
 
         public DbSet<User> Users { get; set; }
         public DbSet<ConfirmationCode> ConfirmationCodes { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options, IConfiguration config) 
             : base(options)
@@ -78,6 +79,24 @@ namespace ChattingApplication.Persistence
                 .IsRequired()
                 .HasDefaultValue(
                 Convert.ToByte(_config["ConfirmationCodes:RemainingNumberOfCodesForThisDay"]) - 1);
+
+
+            modelBuilder.Entity<Message>()
+                .HasKey(m => new {m.Id, m.SenderId, m.ReceiverId });
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Sender)
+                .WithMany(u => u.SentMessages)
+                .HasForeignKey(m => m.SenderId);
+
+            modelBuilder.Entity<Message>()
+                .HasOne(m => m.Receiver)
+                .WithMany(r => r.ReceivedMessages)
+                .HasForeignKey(m => m.ReceiverId);
+
+            modelBuilder.Entity<Message>()
+                .Property(m => m.Body)
+                .HasMaxLength(1024);
 
         }
 
