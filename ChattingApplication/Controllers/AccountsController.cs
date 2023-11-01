@@ -185,7 +185,7 @@ namespace ChattingApplication.Controllers
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.GivenName, user.Username),
-                new Claim(ClaimTypes.Role, user.IsVerified?"Verified":"Unverified")
+                new Claim(ClaimTypes.Role, user.IsVerified?RoleName.Verified:RoleName.Unverified)
             };
 
             var token = new JwtSecurityToken(_config["Jwt:Issuer"],
