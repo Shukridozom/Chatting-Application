@@ -6,6 +6,7 @@ namespace ChattingApplication.Core
     {
         IUserRepository Users { get; }
         IConfirmationCodeRepository ConfirmationCodes { get; }
+        IMessageRepository Messages { get; }
         int Complete();
     }
 }

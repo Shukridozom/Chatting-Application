@@ -14,6 +14,7 @@ namespace ChattingApplication.DependencyInjection
         {
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IConfirmationCodeRepository, ConfirmationCodeRepository>();
+            services.AddTransient<IMessageRepository, MessageRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddDbContext<AppDbContext>(opt => opt
                 .UseMySQL(config.GetConnectionString("DefaultConnection")));

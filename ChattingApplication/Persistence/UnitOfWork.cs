@@ -10,6 +10,7 @@ namespace ChattingApplication.Persistence
         private readonly AppDbContext _context;
         public IUserRepository Users { get; }
         public IConfirmationCodeRepository ConfirmationCodes { get; }
+        public IMessageRepository Messages { get; }
         //public UnitOfWork(AppDbContext context)
         //{
         //    _context = context;
@@ -19,11 +20,13 @@ namespace ChattingApplication.Persistence
 
         public UnitOfWork(AppDbContext context,
             IUserRepository userRepository,
-            IConfirmationCodeRepository confirmationCodeRepository)
+            IConfirmationCodeRepository confirmationCodeRepository,
+            IMessageRepository messages)
         {
             _context = context;
             Users = userRepository;
             ConfirmationCodes = confirmationCodeRepository;
+            Messages = messages;
         }
 
         public int Complete()
