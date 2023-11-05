@@ -9,7 +9,7 @@ namespace ChattingApplication
     public class ChatHub : Hub
     {
         private readonly IUnitOfWork _unitOfWork;
-
+        private static Dictionary<int, int> _connectedUsers = new Dictionary<int, int>();
         public ChatHub(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork;
@@ -18,6 +18,37 @@ namespace ChattingApplication
         {
             await Clients.User(user).SendAsync("ReceiveMessage", Context.UserIdentifier, message);
             SaveMessage(Convert.ToInt32(Context.UserIdentifier), user, message);
+        }
+
+        public override async Task OnConnectedAsync()
+        {
+            var userId = Convert.ToInt32(Context.UserIdentifier);
+
+            if(_connectedUsers.ContainsKey(userId))
+                _connectedUsers[userId]++;
+            else
+            {
+                _connectedUsers.Add(userId, 1);
+                await Clients.Others.SendAsync("UserConnected", userId);
+            }
+
+            base.OnConnectedAsync();
+        }
+
+        public override async Task OnDisconnectedAsync(Exception? exception)
+        {
+            var userId = Convert.ToInt32(Context.UserIdentifier);
+
+            if (_connectedUsers.ContainsKey(userId))
+            {
+                _connectedUsers[userId]--;
+                if (_connectedUsers[userId] == 0)
+                {
+                    _connectedUsers.Remove(userId);
+                    await Clients.Others.SendAsync("UserDisconnected", userId);
+                }
+            }
+            base.OnDisconnectedAsync(exception);
         }
 
         private void SaveMessage(int senderId, string receiverUsername, string body)
