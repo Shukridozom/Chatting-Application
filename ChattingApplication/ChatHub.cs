@@ -2,6 +2,7 @@
 using ChattingApplication.Core.Domains;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using System.Security.Claims;
 
 namespace ChattingApplication
 {
@@ -20,9 +21,12 @@ namespace ChattingApplication
             SaveMessage(Convert.ToInt32(Context.UserIdentifier), user, message);
         }
 
-        public bool IsConnected(int userId)
+        public async Task IsConnected(int userId)
         {
-            return _connectedUsers.ContainsKey(userId);
+            var isConnected = _connectedUsers.ContainsKey(userId);
+            var username = ((ClaimsIdentity)Context.User.Identity).FindFirst(ClaimTypes.GivenName)?.Value;
+            if(username != null)
+                await Clients.User(username).SendAsync("IsConnected", userId, isConnected);
         }
         public override async Task OnConnectedAsync()
         {
