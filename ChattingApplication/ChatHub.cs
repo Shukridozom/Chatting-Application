@@ -20,6 +20,10 @@ namespace ChattingApplication
             SaveMessage(Convert.ToInt32(Context.UserIdentifier), user, message);
         }
 
+        public bool IsConnected(int userId)
+        {
+            return _connectedUsers.ContainsKey(userId);
+        }
         public override async Task OnConnectedAsync()
         {
             var userId = Convert.ToInt32(Context.UserIdentifier);
