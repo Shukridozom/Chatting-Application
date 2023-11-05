@@ -53,14 +53,14 @@ namespace ChattingApplication
 
         private void SaveMessage(int senderId, string receiverUsername, string body)
         {
-            var receiver = _unitOfWork.Users.SingleOrDefault(u => u.Username == receiverUsername);
-            if (receiver == null)
+            var receiverId = _unitOfWork.Users.GetUserId(receiverUsername);
+            if (receiverId == null)
                 return;
 
             var message = new Message()
             {
                 SenderId = senderId,
-                ReceiverId = receiver.Id,
+                ReceiverId = receiverId.Value,
                 Date = DateTime.Now,
                 Body = body
             };

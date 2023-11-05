@@ -12,5 +12,9 @@ namespace ChattingApplication.Persistence.Repositories
 
         }
 
+        public int? GetUserId(string username)
+        {
+            return Context.Users.SingleOrDefault(u => u.Username == username)?.Id;
+        }
     }
 }
