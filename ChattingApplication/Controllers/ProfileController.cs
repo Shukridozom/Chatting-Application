@@ -24,30 +24,23 @@ namespace ChattingApplication.Controllers
         [HttpGet]
         public IActionResult Get()
         {
-            var user = GetUserCredentials();
-            var getProfileDto = _mapper.Map<User, GetProfileDto>(user);
+            var credentials = GetUserCredentials();
+            var userFromDb = _unitOfWork.Users.SingleOrDefault(u => u.Id == credentials.Id);
+            var getProfileDto = _mapper.Map<User, GetProfileDto>(userFromDb);
             return Ok(getProfileDto);
         }
 
         [HttpPost]
         public IActionResult Post(EditProfileDto profile)
         {
-            var usernameFromDb = _unitOfWork.Users.SingleOrDefault
-                (u => u.Username == profile.Username && u.Email == profile.Email);
-            if(usernameFromDb != null)
-            {
-                if (usernameFromDb.Email == profile.Email)
-                    return BadRequest("This Email address is used");
-                else
-                    return BadRequest("This username is used");
-            }
+            var credentials = GetUserCredentials();
 
-            User user = GetUserCredentials();
-            user = _mapper.Map<EditProfileDto, User>(profile);
+            User userFromDb = _unitOfWork.Users.SingleOrDefault(u => u.Id == credentials.Id);
+           _mapper.Map(profile,userFromDb);
          
             _unitOfWork.Complete();
             
-            return Ok(_mapper.Map<User, GetProfileDto>(user));
+            return Ok(_mapper.Map<User, GetProfileDto>(userFromDb));
         }
     }
 }

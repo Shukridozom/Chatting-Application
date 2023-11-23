@@ -14,8 +14,7 @@ namespace ChattingApplication
                 .ForMember(m => m.Id, opt => opt.Ignore());
 
             CreateMap<User, GetProfileDto>();
-            CreateMap<EditProfileDto, User>()
-                .ForMember(m => m.Id, opt => opt.Ignore());
+            CreateMap<EditProfileDto, User>();
 
         }
     }

@@ -5,17 +5,6 @@ namespace ChattingApplication.Dtos
 {
     public class EditProfileDto
     {
-        public int Id { get; set; }
-
-        [Required]
-        [MaxLength(50)]
-        [UsernameCharacterSet]
-        public string Username { get; set; }
-
-        [Required]
-        [MaxLength(255)]
-        [EmailAddress]
-        public string Email { get; set; }
 
         [Required]
         [MaxLength(255)]
