@@ -15,19 +15,11 @@ namespace ChattingApplication.Controllers
 {
     [Route("api")]
     [ApiController]
-    public class AccountsController : ControllerBase
+    public class AccountsController : AppBaseController
     {
-        private readonly IConfiguration _config;
-        private readonly IUnitOfWork _unitOfWork;
-        private readonly IMapper _mapper;
-        private readonly IEmailService mailService;
-
-        public AccountsController(IConfiguration config, IUnitOfWork unitOfWork, IMapper mapper, IEmailService mailService)
+        public AccountsController(IConfiguration config, IUnitOfWork unitOfWork, IMapper mapper, IEmailService _mailService)
+            : base(config, unitOfWork, mapper, _mailService)
         {
-            _config = config;
-            _unitOfWork = unitOfWork;
-            _mapper = mapper;
-            this.mailService = mailService;
         }
 
         [AllowAnonymous]
@@ -74,7 +66,7 @@ namespace ChattingApplication.Controllers
             var code = CreateOrUpdateVerificationCode(user.Id);
 
             if(code != null)
-                mailService.SendConfirmationCode
+                _mailService.SendConfirmationCode
                     (user.Email, user.FirstName + " " + user.LastName, code, EmailType.ConfirmAccount);
 
             return Ok();
@@ -154,7 +146,7 @@ namespace ChattingApplication.Controllers
             var code = CreateOrUpdateVerificationCode(user.Id);
 
             if (code != null)
-                mailService.SendConfirmationCode
+                _mailService.SendConfirmationCode
                     (user.Email, user.FirstName + " " + user.LastName, code, EmailType.ConfirmAccount);
 
             return Ok();
@@ -197,22 +189,22 @@ namespace ChattingApplication.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private User GetUserCredentials()
-        {
-            var identity = HttpContext.User.Identity as ClaimsIdentity;
+        //private User GetUserCredentials()
+        //{
+        //    var identity = HttpContext.User.Identity as ClaimsIdentity;
 
-            if (identity == null)
-                return null;
+        //    if (identity == null)
+        //        return null;
 
-            var userClaims = identity.Claims;
-            return new User
-            {
-                Id = Convert.ToInt32(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value),
-                Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
-                Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
-                IsVerified = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value == "Verified"
-            };
-        }
+        //    var userClaims = identity.Claims;
+        //    return new User
+        //    {
+        //        Id = Convert.ToInt32(userClaims.FirstOrDefault(o => o.Type == ClaimTypes.NameIdentifier)?.Value),
+        //        Email = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Email)?.Value,
+        //        Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
+        //        IsVerified = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value == "Verified"
+        //    };
+        //}
 
         private string CreateOrUpdateVerificationCode(int userId)
         {
