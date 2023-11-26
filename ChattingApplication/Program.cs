@@ -8,6 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using ChattingApplication.DependencyInjection;
 using ChattingApplication.Core.EmailService;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json.Serialization;
 
 namespace ChattingApplication
 {
@@ -19,7 +21,12 @@ namespace ChattingApplication
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
+            //builder.Services.AddControllers();
+            builder.Services.AddControllers().AddNewtonsoftJson();
+            builder.Services.Configure<MvcNewtonsoftJsonOptions>(options =>
+            {
+                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+            });
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
