@@ -35,7 +35,7 @@ namespace ChattingApplication.Controllers
                 return Ok(token);
             }
 
-            return NotFound("The username or password is incorrect");
+            return NotFound(GenerateJsonErrorResponse("username", "The username or password is incorrect"));
         }
 
 
@@ -47,12 +47,12 @@ namespace ChattingApplication.Controllers
             var userWithSameUsername = _unitOfWork.Users.SingleOrDefault
                 (u => u.Username.ToLower() == registerDto.Username.ToLower());
             if (userWithSameUsername != null)
-                return BadRequest("Username already exists");
+                return BadRequest(GenerateJsonErrorResponse("username", "Username already exists"));
 
             var userWithSameEmail = _unitOfWork.Users.SingleOrDefault
                 (u => u.Email.ToLower() == registerDto.Email.ToLower());
             if (userWithSameEmail != null)
-                return BadRequest("Email already exists");
+                return BadRequest(GenerateJsonErrorResponse("email", "Email already exists"));
 
 
             var user = _mapper.Map<RegisterDto, User>(registerDto);
@@ -81,17 +81,17 @@ namespace ChattingApplication.Controllers
                 .SingleOrDefault(cc => cc.UserId == userCredentials.Id);
 
             if (confirmationCode == null)
-                return BadRequest("This code is not valid anymore, request a new one");
+                return BadRequest(GenerateJsonErrorResponse("code", "This code is not valid anymore, request a new one"));
 
             if (confirmationCode.ExpireDate < DateTime.Now || confirmationCode.Trials == 0)
-                return BadRequest("This code is not valid anymore, request a new one");
+                return BadRequest(GenerateJsonErrorResponse("code", "This code is not valid anymore, request a new one"));
 
             if (confirmationCode.Code != code)
             {
                 confirmationCode.Trials--;
                 _unitOfWork.Complete();
 
-                return BadRequest("Unvalid confirmation code");
+                return BadRequest(GenerateJsonErrorResponse("code", "Unvalid confirmation code"));
             }
 
             confirmationCode.Trials = 0;
@@ -109,23 +109,23 @@ namespace ChattingApplication.Controllers
             var user = _unitOfWork.Users.SingleOrDefault(u => u.Email == resetPasswordDto.Email);
 
             if (user == null)
-                return BadRequest("Unavailable Email address");
+                return BadRequest(GenerateJsonErrorResponse("email", "Unavailable Email address"));
 
             var confirmationCode = _unitOfWork.ConfirmationCodes
                 .SingleOrDefault(cc => cc.UserId == user.Id);
 
             if (confirmationCode == null)
-                return BadRequest("This code is not valid anymore, request a new one");
+                return BadRequest(GenerateJsonErrorResponse("code", "This code is not valid anymore, request a new one"));
 
             if (confirmationCode.ExpireDate < DateTime.Now || confirmationCode.Trials == 0)
-                return BadRequest("This code is not valid anymore, request a new one");
+                return BadRequest(GenerateJsonErrorResponse("code", "This code is not valid anymore, request a new one"));
 
             if (confirmationCode.Code != resetPasswordDto.Code)
             {
                 confirmationCode.Trials--;
                 _unitOfWork.Complete();
 
-                return BadRequest("Unvalid confirmation code");
+                return BadRequest(GenerateJsonErrorResponse("code", "Unvalid confirmation code"));
             }
 
             confirmationCode.Trials = 0;
@@ -141,7 +141,7 @@ namespace ChattingApplication.Controllers
         {
             var user = _unitOfWork.Users.SingleOrDefault(u => u.Email == email);
             if (user == null)
-                return BadRequest("Unavailable Email ");
+                return BadRequest(GenerateJsonErrorResponse("email", "Unavailable Email "));
 
             var code = CreateOrUpdateVerificationCode(user.Id);
 
