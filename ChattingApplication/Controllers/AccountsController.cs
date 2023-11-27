@@ -35,7 +35,7 @@ namespace ChattingApplication.Controllers
                 return Ok(token);
             }
 
-            return NotFound(GenerateJsonErrorResponse("username", "The username or password is incorrect"));
+            return NotFound(GenerateJsonErrorResponse("email", "The email or password is incorrect"));
         }
 
 
