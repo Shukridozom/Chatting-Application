@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ChattingApplication.Core.Domains;
 using System.Security.Claims;
+using System.Text.Json.Nodes;
 
 namespace ChattingApplication.Controllers
 {
@@ -38,6 +39,18 @@ namespace ChattingApplication.Controllers
                 Username = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.GivenName)?.Value,
                 IsVerified = userClaims.FirstOrDefault(o => o.Type == ClaimTypes.Role)?.Value == "Verified"
             };
+        }
+
+        protected JsonObject GenerateJsonErrorResponse(string property, string message)
+        {
+            var response = new JsonObject();
+            var errors = new JsonObject();
+            var messages = new JsonArray();
+            messages.Add(message);
+            errors.Add(property, messages);
+            response.Add("errors", errors);
+
+            return response;
         }
 
 
