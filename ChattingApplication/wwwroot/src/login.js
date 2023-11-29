@@ -27,15 +27,15 @@ $(document).ready(function() {
                         "complete": function(response) {
                             switch (response.status) {
                                 case 200:
-                                    console.log(response.responseText);
                                     window.localStorage.setItem('access-token', response.responseText);
                                     window.location.replace(domain + "/index.html");
                                     break;
                                 default:
+                                    $(".validation-message").remove();
                                     var errors = JSON.parse(response.responseText);
                                     if('errors' in errors) {
                                         for(let key in errors.errors)
-                                            $(`#${key}`).after(`<small class="form-text text-muted" style="color: red !important;">${errors.errors[key][0]}</small>`);
+                                            $(`#${key}`).after(`<small class="form-text text-muted validation-message" style="color: red !important;">${errors.errors[key][0]}</small>`);
                                     }
                                     break;
                             }
