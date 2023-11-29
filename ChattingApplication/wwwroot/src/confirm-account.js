@@ -20,6 +20,38 @@ $(document).ready(function() {
                     $("#nav-item-login").remove();
                     $("#nav-item-reset-password").remove();
                     $("body").css("visibility", "visible");
+
+                    $('#confirm-account-form').on('submit', function(event) {
+                        var settings = {
+                            "url": domain + `/api/confirmAccount?code=${$("#code").val()}`,
+                            "method": "POST",
+                            "timeout": 0,
+                            "headers": {
+                              "Authorization": "Bearer " + window.localStorage.getItem('access-token')  
+                            },
+                            "complete": function(response) {
+                                switch(response.status) {
+                                    case 200:
+                                        window.location.replace(domain + "/index.html");
+                                        break;
+                                    
+                                    default:
+                                        $(".validation-message").remove();
+                                        var errors = JSON.parse(response.responseText);
+                                        if('errors' in errors) {
+                                            for(let key in errors.errors)
+                                                $(`#${key}`).after(`<small class="form-text text-muted validation-message" style="color: red !important;">${errors.errors[key][0]}</small>`);
+                                        }
+                                        break;
+
+                                }
+                            }
+                          };
+                          
+                          $.ajax(settings);
+
+                        event.preventDefault();
+                    });
                 }
             }
         }
