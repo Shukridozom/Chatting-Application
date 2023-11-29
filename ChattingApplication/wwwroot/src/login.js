@@ -11,11 +11,46 @@ $(document).ready(function() {
             401: function(){
                 $("#nav-item-logout").remove();
                 $("body").css("visibility", "visible");
+
+                $('#login-form').on('submit', function(event) {
+                    var settings = {
+                        "url":  domain + "/api/login",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                          "Content-Type": "application/json"
+                        },
+                        "data": JSON.stringify({
+                          "username": $("#username").val(),
+                          "password": $("#password").val()
+                        }),
+                        "complete": function(response) {
+                            switch (response.status) {
+                                case 200:
+                                    console.log(response.responseText);
+                                    window.localStorage.setItem('access-token', response.responseText);
+                                    window.location.replace(domain + "/index.html");
+                                    break;
+                                default:
+                                    var errors = JSON.parse(response.responseText);
+                                    if('errors' in errors) {
+                                        for(let key in errors.errors)
+                                            $(`#${key}`).after(`<small class="form-text text-muted" style="color: red !important;">${errors.errors[key][0]}</small>`);
+                                    }
+                                    break;
+                            }
+                        }
+                      };
+                      
+                      $.ajax(settings);
+
+                    event.preventDefault();
+                  });
             },
             200: function(res){
                 let isVerified = res.isVerified;
                 if(isVerified)
-                    window.location.replace(domain + "/login.html");
+                    window.location.replace(domain + "/index.html");
                 else
                     window.location.replace(domain + "/confirm-account.html");
             }
