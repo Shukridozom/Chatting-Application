@@ -19,7 +19,7 @@ $(document).ready(function() {
                     $("#nav-item-register").remove();
                     $("#nav-item-login").remove();
                     $("#nav-item-reset-password").remove();
-                    $("main").css("visibility", "visible");
+                    $("body").css("visibility", "visible");
                 }
             }
         }

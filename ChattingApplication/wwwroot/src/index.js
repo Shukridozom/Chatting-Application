@@ -17,7 +17,7 @@ $(document).ready(function() {
                     $("#nav-item-register").remove();
                     $("#nav-item-login").remove();
                     $("#nav-item-reset-password").remove();
-                    $("main").css("visibility", "visible");
+                    $("body").css("visibility", "visible");
                 }
                 else
                     window.location.replace(domain + "/confirm-account.html");

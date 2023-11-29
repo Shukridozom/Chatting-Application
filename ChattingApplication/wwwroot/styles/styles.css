@@ -4,6 +4,7 @@
 
   body{
     padding-bottom: 2rem;
+    visibility: hidden;
   }
   
 form{
