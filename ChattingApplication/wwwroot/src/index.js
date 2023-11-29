@@ -13,8 +13,12 @@ $(document).ready(function() {
             },
             200: function(res){
                 let isVerified = res.isVerified;
-                if(isVerified)
+                if(isVerified) {
+                    $("#nav-item-register").remove();
+                    $("#nav-item-login").remove();
+                    $("#nav-item-reset-password").remove();
                     $("main").css("visibility", "visible");
+                }
                 else
                     window.location.replace(domain + "/confirm-account.html");
             }

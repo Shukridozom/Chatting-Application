@@ -11,6 +11,7 @@ $(document).ready(function() {
     },
         "statusCode": {
             401: function(){
+                $("#nav-item-logout").remove();
                 $("main").css("visibility", "visible");
             },
             200: function(res){

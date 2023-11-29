@@ -9,14 +9,18 @@ $(document).ready(function() {
     },
         "statusCode": {
             401: function(){
-                window.location.replace(domain + "/login.html")
+                window.location.replace(domain + "/login.html");
             },
             200: function(res){
                 let isVerified = res.isVerified;
                 if(isVerified)
                     window.replace(domain + "/index.html");
-                else
+                else {
+                    $("#nav-item-register").remove();
+                    $("#nav-item-login").remove();
+                    $("#nav-item-reset-password").remove();
                     $("main").css("visibility", "visible");
+                }
             }
         }
       };
