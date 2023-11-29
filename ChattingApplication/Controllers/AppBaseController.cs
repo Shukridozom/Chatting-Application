@@ -41,7 +41,7 @@ namespace ChattingApplication.Controllers
             };
         }
 
-        protected JsonObject GenerateJsonErrorResponse(string property, string message)
+        protected string GenerateJsonErrorResponse(string property, string message)
         {
             var response = new JsonObject();
             var errors = new JsonObject();
@@ -50,7 +50,7 @@ namespace ChattingApplication.Controllers
             errors.Add(property, messages);
             response.Add("errors", errors);
 
-            return response;
+            return response.ToString();
         }
 
 
