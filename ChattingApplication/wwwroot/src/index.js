@@ -22,4 +22,11 @@ $(document).ready(function() {
       };
       
       $.ajax(settings);
+
+
+      $("#nav-item-logout").on('click', function(event) {
+        window.localStorage.clear();
+        window.location.replace(domain + '/login.html');
+        event.preventDefault();
+        });
 });
