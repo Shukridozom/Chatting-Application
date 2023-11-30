@@ -5,14 +5,56 @@ $(document).ready(function() {
         "method": "GET",
         "timeout": 0,
         "headers": {
-        //   "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjYiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ4ZWdpaGUxNzcyQGRwc29scy5jb20iLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9naXZlbm5hbWUiOiJzdHJpbmciLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJWZXJpZmllZCIsImV4cCI6MTcwMDkzNzUzOSwiaXNzIjoiaHR0cHM6Ly9sb2NhbGhvc3Q6NzAwMCIsImF1ZCI6Imh0dHBzOi8vbG9jYWxob3N0OjcwMDAifQ.r9Vx2AummxBNUFdiKOubJ5K_Q1wJAR5hfFvN6WupduY"
-        //   "Authorization": "Bearer eyhhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6IjQiLCJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ2aWNhbjMwOTgzQGZyYW5kaW4uY29tIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvZ2l2ZW5uYW1lIjoic3RyaW5nIiwiaHR0cDovL3NjaGVtYXMubWljcm9zb2Z0LmNvbS93cy8yMDA4LzA2L2lkZW50aXR5L2NsYWltcy9yb2xlIjoiVmVyaWZpZWQiLCJleHAiOjE3MDA5MzUwNDMsImlzcyI6Imh0dHBzOi8vbG9jYWxob3N0OjcwMDAiLCJhdWQiOiJodHRwczovL2xvY2FsaG9zdDo3MDAwIn0.QFSVjSBlewNumaAYRCOEyt4KAZXmce3418BBEJC1pEI"
             "Authorization": "Bearer " + window.localStorage.getItem('access-token')
     },
         "statusCode": {
             401: function(){
                 $("#nav-item-logout").remove();
                 $("body").css("visibility", "visible");
+
+                $('#register-form').on('submit', function(event) {
+                    var settings = {
+                        "url":  domain + "/api/register",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                          "Content-Type": "application/json"
+                        },
+                        "data": JSON.stringify({
+                          "email": $("#email").val(),
+                          "username": $("#username").val(),
+                          "password": $("#password").val(),
+                          "confirmPassword": $("#confirmPassword").val(),
+                          "firstName": $("#firstName").val(),
+                          "lastName": $("#lastName").val(),
+                          "dateOfBirth": $("#dateOfBirth").val()
+                        }),
+                        "complete": function(response) {
+                            switch (response.status) {
+                                case 200:
+                                    window.location.replace(domain + "/confirm-account.html");
+                                    break;
+                                default:
+                                    $('#btn-register').prop('disabled', false);
+                                    $(".validation-message").remove();
+                                    var errors = JSON.parse(response.responseText);
+                                    if('errors' in errors) {
+                                        for(let key in errors.errors){
+                                            console.log(`#${key}`);
+                                            console.log(`${errors.errors[key][0]}`);
+                                            $(`#${key}`).after(`<small class="form-text text-muted validation-message" style="color: red !important;">${errors.errors[key][0]}</small>`);
+                                        }
+                                        }
+                                    break;
+                            }
+                        }
+                      };
+                      
+                      $.ajax(settings);
+                      $('#btn-register').prop('disabled', true);
+
+                    event.preventDefault();
+                  });
             },
             200: function(res){
                 let isVerified = res.isVerified;
