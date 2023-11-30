@@ -11,6 +11,42 @@ $(document).ready(function() {
             401: function(){
                 $("#nav-item-logout").remove();
                 $("body").css("visibility", "visible");
+
+                $('#reset-password-form').on('submit', function(event) {
+                    var settings = {
+                        "url":  domain + "/api/resetPassword",
+                        "method": "POST",
+                        "timeout": 0,
+                        "headers": {
+                          "Content-Type": "application/json"
+                        },
+                        "data": JSON.stringify({
+                          "code": $("#code").val(),
+                          "email": $("#email").val(),
+                          "password": $("#password").val(),
+                          "confirmPassword": $("#confirmPassword").val()
+                        }),
+                        "complete": function(response) {
+                            switch (response.status) {
+                                case 200:
+                                    window.location.replace(domain + "/login.html");
+                                    break;
+                                default:
+                                    $(".validation-message").remove();
+                                    var errors = JSON.parse(response.responseText);
+                                    if('errors' in errors) {
+                                        for(let key in errors.errors)
+                                            $(`#${key}`).after(`<small class="form-text text-muted validation-message" style="color: red !important;">${errors.errors[key][0]}</small>`);
+                                    }
+                                    break;
+                            }
+                        }
+                      };
+                      
+                      $.ajax(settings);
+
+                    event.preventDefault();
+                  });
             },
             200: function(res){
                 window.location.replace(domain + "/index.html");
