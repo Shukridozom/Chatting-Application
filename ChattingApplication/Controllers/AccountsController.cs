@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -145,9 +146,11 @@ namespace ChattingApplication.Controllers
 
             var code = CreateOrUpdateVerificationCode(user.Id);
 
-            if (code != null)
-                _mailService.SendConfirmationCode
-                    (user.Email, user.FirstName + " " + user.LastName, code, EmailType.ConfirmAccount);
+            if (code == null)
+                return BadRequest(GenerateJsonErrorResponse("alert", "you have exceeded the limit of verification attempts"));
+                
+        _mailService.SendConfirmationCode
+                (user.Email, user.FirstName + " " + user.LastName, code, EmailType.ConfirmAccount);
 
             return Ok();
 
