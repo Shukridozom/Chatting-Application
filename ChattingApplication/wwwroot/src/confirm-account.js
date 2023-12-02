@@ -45,10 +45,12 @@ $(document).ready(function() {
                                         break;
 
                                 }
+                                $('#btn-confirm-account').prop('disabled', false);
                             }
-                          };
-                          
-                          $.ajax(settings);
+                        };
+                        
+                        $.ajax(settings);
+                        $('#btn-confirm-account').prop('disabled', true);
 
                         event.preventDefault();
                     });

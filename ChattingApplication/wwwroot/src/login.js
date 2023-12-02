@@ -39,10 +39,12 @@ $(document).ready(function() {
                                     }
                                     break;
                             }
+                            $('#btn-login').prop('disabled', false);
                         }
                       };
                       
                       $.ajax(settings);
+                      $('#btn-login').prop('disabled', true);
 
                     event.preventDefault();
                   });

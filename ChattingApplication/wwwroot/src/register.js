@@ -35,7 +35,6 @@ $(document).ready(function() {
                                     window.location.replace(domain + "/confirm-account.html");
                                     break;
                                 default:
-                                    $('#btn-register').prop('disabled', false);
                                     $(".validation-message").remove();
                                     var errors = JSON.parse(response.responseText);
                                     if('errors' in errors) {
@@ -44,9 +43,10 @@ $(document).ready(function() {
                                             console.log(`${errors.errors[key][0]}`);
                                             $(`#${key}`).after(`<small class="form-text text-muted validation-message" style="color: red !important;">${errors.errors[key][0]}</small>`);
                                         }
-                                        }
+                                    }
                                     break;
-                            }
+                                }
+                            $('#btn-register').prop('disabled', false);
                         }
                       };
                       

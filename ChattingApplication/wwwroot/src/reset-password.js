@@ -40,10 +40,12 @@ $(document).ready(function() {
                                     }
                                     break;
                             }
+                            $('#btn-reset-password').prop('disabled', false);
                         }
                       };
                       
                       $.ajax(settings);
+                      $('#btn-reset-password').prop('disabled', true);
 
                     event.preventDefault();
                   });

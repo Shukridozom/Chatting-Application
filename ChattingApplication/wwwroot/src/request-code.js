@@ -40,10 +40,10 @@ $(document).ready(function() {
                                             }
                                             $(`#${key}`).after(`<small class="form-text text-muted validation-message" style="color: red !important;">${errors.errors[key][0]}</small>`);
                                         }
-                                        $("#btn-request-code").prop("disabled", false);
                                     }
                                     break;
                                 }
+                                $("#btn-request-code").prop("disabled", false);
                             }
                         };
                         
