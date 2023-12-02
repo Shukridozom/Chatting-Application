@@ -49,3 +49,7 @@ button, .request-code-link{
     transition: all 1s;
   }
   
+  .buttons-group {
+    display: flex;
+    justify-content: space-around;
+  }
