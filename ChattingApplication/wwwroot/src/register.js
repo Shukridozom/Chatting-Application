@@ -32,8 +32,33 @@ $(document).ready(function() {
                         "complete": function(response) {
                             switch (response.status) {
                                 case 200:
-                                    window.location.replace(domain + "/confirm-account.html");
+                                        var settings = {
+                                            "url":  domain + "/api/login",
+                                            "method": "POST",
+                                            "timeout": 0,
+                                            "headers": {
+                                              "Content-Type": "application/json"
+                                            },
+                                            "data": JSON.stringify({
+                                              "username": $("#username").val(),
+                                              "password": $("#password").val()
+                                            }),
+                                            "complete": function(response) {
+                                                switch (response.status) {
+                                                    case 200:
+                                                        window.localStorage.setItem('access-token', response.responseText);
+                                                        window.location.replace(domain + "/index.html");
+                                                        break;
+                                                    default:
+                                                        window.location.replace(domain + "/login.html");
+                                                        break;
+                                                }
+                                            }
+                                          };
+                                          
+                                          $.ajax(settings);
                                     break;
+
                                 default:
                                     $(".validation-message").remove();
                                     var errors = JSON.parse(response.responseText);
