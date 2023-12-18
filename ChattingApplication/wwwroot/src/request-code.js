@@ -1,5 +1,5 @@
 $(document).ready(function() {
-    let domain = "https://localhost:7000"
+    let domain = 'https://' + window.location.host;
     var settings = {
         "url": domain + "/api/Profile",
         "method": "GET",
