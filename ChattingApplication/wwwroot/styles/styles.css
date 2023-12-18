@@ -40,7 +40,7 @@ button, .request-code-link{
 }
 
 
-#request-code-alert {
+.request-code-alert {
     position: fixed;
     width: 45%;
     bottom: -10rem;

@@ -31,9 +31,9 @@ $(document).ready(function() {
                                     if('errors' in errors) {
                                         for(let key in errors.errors) {
                                             if(key === 'alert') {
-                                                $("#request-code-alert").css("bottom", "0rem");
+                                                $(".request-code-alert").css("bottom", "0rem");
                                                 setTimeout(function(){
-                                                    $("#request-code-alert").css("bottom", "-10rem");
+                                                    $(".request-code-alert").css("bottom", "-10rem");
                                                 },2000);
                                                 
                                                 continue;
