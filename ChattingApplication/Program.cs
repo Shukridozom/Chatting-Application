@@ -70,6 +70,8 @@ namespace ChattingApplication
 
             app.UseAuthorization();
 
+            app.UseStaticFiles();
+
             app.MapHub<ChatHub>("/chatHub");
 
             app.MapControllers();

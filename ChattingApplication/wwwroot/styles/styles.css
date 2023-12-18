@@ -1,0 +1,120 @@
+:root {
+    scroll-behavior: auto !important;
+  } 
+
+  body{
+    visibility: hidden;
+  }
+  
+form{
+    border: var(--bs-border-width) solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    box-shadow: var(--bs-box-shadow-inset);
+    padding: 1rem;
+    margin: 5rem auto;
+    max-width: 576px;
+}
+
+button, .request-code-link{
+    margin: 1.5rem 1.5rem auto 1.5rem;
+    }
+
+#register-form{
+    margin-top: 1rem;
+}
+
+#login-form{
+    margin-top: 5rem;
+}
+
+#confirm-account-form{
+    margin-top: 7rem;
+}
+
+#reset-password-form{
+    margin: 1rem auto;
+}
+
+#request-code-form{
+    margin-top: 10rem;
+}
+
+
+.request-code-alert {
+    position: fixed;
+    width: 45%;
+    bottom: -10rem;
+    right: 0;
+    transition: all 1s;
+  }
+  
+  .buttons-group {
+    display: flex;
+    justify-content: space-around;
+  }
+
+#main-page {
+
+    border-bottom: 1px solid black;
+}
+
+#search-column li, #active-chat-column li{ 
+    list-style-type: none; 
+}
+
+#search-column {
+    border-right: 1px solid black;
+    padding: 10px;
+}
+
+#search {
+    margin: 10px;
+    width: 90%;
+}
+
+#conversations {
+    overflow-y: scroll;
+    height: 69vh;
+    margin: 10px;
+    width: 90%;
+}
+
+
+.new-message-conversation {
+    color: blueviolet;
+}
+
+.no-new-message-conversation {
+    color: gray;
+}
+
+
+/* #active-chat-title { */
+    #chat-details {
+    text-align: center;
+    border-bottom: 1px solid black;
+    margin-top: 10px;
+    padding: 5px;
+}
+
+#active-chat-main {
+overflow-y: scroll;
+height: 60vh;
+border-bottom: 1px solid black;
+}
+
+.sent-message {
+    color: red;
+}
+
+.received-message {
+    color: blue;
+}
+
+
+#input-message {
+    width: 90%;
+    height: 5rem;
+    resize: none;
+    border-radius: 1rem;
+}
